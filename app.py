@@ -206,22 +206,228 @@ def home():
     signal, change = get_signal()
     gamma = detect_gamma()
 
+    # Premium Dark Mode Glassmorphism Theme
+    gamma_class = "gamma-active" if "ACTIVE" in gamma else "gamma-normal"
+    signal_col = "#10b981" if "EXPAN" in signal else "#ef4444" if "CONTR" in signal else "#8b5cf6"
+    
     return render_template_string(f"""
-    <h2>AI Trading Engine</h2>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>AI Trade Engine - Live Data</title>
+        <meta http-equiv="refresh" content="20">
+        <style>
+            :root {{
+                --bg-main: #0f172a;
+                --bg-card: rgba(30, 41, 59, 0.7);
+                --text-main: #f8fafc;
+                --text-muted: #94a3b8;
+                --accent-call: #10b981; /* Emerald Green */
+                --accent-put: #ef4444; /* Rose Red */
+                --accent-glow: #3b82f6; /* Blue Glow */
+            }}
+            
+            body {{
+                margin: 0;
+                padding: 0;
+                background-color: var(--bg-main);
+                background-image: radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.15), transparent 25%), 
+                                  radial-gradient(circle at 85% 30%, rgba(16, 185, 129, 0.15), transparent 25%);
+                color: var(--text-main);
+                font-family: 'Inter', sans-serif;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                min-height: 100vh;
+            }}
 
-    <p>Spot: {spot}</p>
-    <p>ATM: {atm}</p>
+            header {{
+                margin-top: 3rem;
+                text-align: center;
+            }}
 
-    <p>CE: {ce} | PE: {pe}</p>
+            h1 {{
+                font-size: 2.5rem;
+                font-weight: 800;
+                margin-bottom: 0.5rem;
+                background: linear-gradient(to right, #38bdf8, #818cf8);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                letter-spacing: -1px;
+            }}
 
-    <p>Straddle: {straddle}</p>
-    <p>Signal: {signal}</p>
+            .subtitle {{
+                font-size: 0.9rem;
+                color: var(--text-muted);
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                margin-bottom: 2rem;
+            }}
 
-    <h3>{gamma}</h3>
+            .dashboard {{
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 1.5rem;
+                width: 90%;
+                max-width: 1000px;
+            }}
 
-    <p style="color:red;">{err}</p>
+            .card {{
+                background: var(--bg-card);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                border: 1px solid rgba(255, 255, 255, 0.05);
+                border-radius: 16px;
+                padding: 1.5rem;
+                box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }}
+            
+            .card:hover {{
+                transform: translateY(-5px);
+                box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+            }}
 
-    <meta http-equiv="refresh" content="30">
+            .card-title {{
+                font-size: 0.85rem;
+                color: var(--text-muted);
+                text-transform: uppercase;
+                font-weight: 600;
+                letter-spacing: 1px;
+                margin-bottom: 1rem;
+            }}
+
+            .metric {{
+                font-size: 2.2rem;
+                font-weight: 800;
+                margin: 0;
+            }}
+            
+            .metric.spot {{ color: #e2e8f0; }}
+            .metric.ce {{ color: var(--accent-call); }}
+            .metric.pe {{ color: var(--accent-put); }}
+
+            .split-view {{
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }}
+            
+            .split-item {{
+                text-align: center;
+                flex: 1;
+            }}
+            
+            .divider {{
+                width: 1px;
+                height: 40px;
+                background: rgba(255,255,255,0.1);
+                margin: 0 1rem;
+            }}
+
+            .gamma-card {{
+                grid-column: 1 / -1;
+                text-align: center;
+                padding: 2rem;
+            }}
+
+            .gamma-active {{
+                background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(245, 158, 11, 0.1));
+                border-color: rgba(245, 158, 11, 0.3);
+                box-shadow: 0 0 30px rgba(245, 158, 11, 0.2);
+                animation: pulse 2s infinite;
+            }}
+
+            .gamma-active h2 {{
+                color: #f59e0b;
+                font-size: 2.5rem;
+                margin: 0;
+                text-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
+            }}
+
+            .gamma-normal h2 {{
+                color: var(--text-muted);
+                font-size: 2rem;
+                margin: 0;
+            }}
+
+            @keyframes pulse {{
+                0% {{ box-shadow: 0 0 20px rgba(245, 158, 11, 0.1); }}
+                50% {{ box-shadow: 0 0 40px rgba(245, 158, 11, 0.4); }}
+                100% {{ box-shadow: 0 0 20px rgba(245, 158, 11, 0.1); }}
+            }}
+
+            .error-banner {{
+                display: {'block' if err else 'none'};
+                background: rgba(239, 68, 68, 0.1);
+                border-left: 4px solid var(--accent-put);
+                padding: 1rem 1.5rem;
+                border-radius: 8px;
+                width: 90%;
+                max-width: 1000px;
+                margin-top: 2rem;
+                color: #fca5a5;
+            }}
+        </style>
+    </head>
+    <body>
+
+        <header>
+            <h1>Nifty 50 Engine</h1>
+            <div class="subtitle">Live Algorithmic Dashboard</div>
+        </header>
+
+        <div class="dashboard">
+            <!-- Market Status -->
+            <div class="card">
+                <div class="card-title">Live Spot Price</div>
+                <div class="metric spot">{spot}</div>
+                <div style="margin-top: 0.5rem; color: var(--text-muted); font-size: 0.9rem;">
+                    ATM Locked: <b>{atm}</b>
+                </div>
+            </div>
+
+            <!-- Premium Prices -->
+            <div class="card">
+                <div class="card-title">Live Premiums (LTP)</div>
+                <div class="split-view">
+                    <div class="split-item">
+                        <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:5px;">CE TICK</div>
+                        <div class="metric ce">{ce}</div>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="split-item">
+                        <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:5px;">PE TICK</div>
+                        <div class="metric pe">{pe}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Straddle Flow -->
+            <div class="card">
+                <div class="card-title">Straddle Total</div>
+                <div class="metric" style="color: #60a5fa;">{straddle}</div>
+                <div style="margin-top: 0.5rem; font-size: 0.9rem;">
+                    <span style="color: {signal_col}; font-weight: 600;">{signal}</span> 
+                    <span style="color: var(--text-muted); margin-left: 8px;">({change}%)</span>
+                </div>
+            </div>
+
+            <!-- Gamma Central -->
+            <div class="card gamma-card {gamma_class}">
+                <div class="card-title" style="margin-bottom: 0.5rem;">Gamma State</div>
+                <h2>{gamma}</h2>
+            </div>
+        </div>
+
+        <div class="error-banner">
+            ⚠️ <b>System Notice:</b> {err}
+        </div>
+
+    </body>
+    </html>
     """)
 
 
