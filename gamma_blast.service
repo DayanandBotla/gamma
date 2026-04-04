@@ -1,0 +1,17 @@
+[Unit]
+Description=Gamma Blast Terminal — Nifty 50
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/gamma_blast
+EnvironmentFile=/root/gamma_blast/.env
+ExecStart=/root/gamma_blast/venv/bin/uvicorn app:app --host 0.0.0.0 --port 8001 --workers 1
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

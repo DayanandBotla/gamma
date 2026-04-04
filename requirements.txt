@@ -1,4 +1,4 @@
-python-dotenv
-flask
-gunicorn
+fastapi
+uvicorn[standard]
 dhanhq
+python-dotenv
