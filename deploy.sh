@@ -1,7 +1,7 @@
 #!/bin/bash
 # ============================================================
 # deploy.sh — Gamma Blast Terminal Setup on Hetzner VPS
-# Run from: /root/gamma_blast/
+# Run from: /root/gamma/
 # ============================================================
 set -e
 
